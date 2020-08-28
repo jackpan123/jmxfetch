@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXServiceURL;
 import javax.management.remote.rmi.RMIConnectorServer;
-import javax.rmi.ssl.SslRMIClientSocketFactory;
 
 @Slf4j
 public class RemoteConnection extends Connection {
@@ -52,7 +51,7 @@ public class RemoteConnection extends Connection {
         try {
             rmiConnectionTimeout = (Integer) connectionParams.get("rmi_connection_timeout");
         } catch (final ClassCastException e) {
-            rmiConnectionTimeout = 
+            rmiConnectionTimeout =
                 Integer.parseInt((String) connectionParams.get("rmi_connection_timeout"));
         }
         if (rmiConnectionTimeout == null) {
@@ -105,7 +104,7 @@ public class RemoteConnection extends Connection {
         Map<String, Object> environment = new HashMap<String, Object>();
         boolean useSsl = (connectionParams.containsKey("rmi_registry_ssl")
                 && (Boolean) connectionParams.get("rmi_registry_ssl"));
-        JmxfetchRmiClientSocketFactory csf = 
+        JmxfetchRmiClientSocketFactory csf =
             new JmxfetchRmiClientSocketFactory(rmiTimeout, rmiConnectionTimeout, useSsl);
         environment.put("com.sun.jndi.rmi.factory.socket", csf);
         environment.put(RMIConnectorServer.RMI_CLIENT_SOCKET_FACTORY_ATTRIBUTE, csf);

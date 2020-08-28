@@ -148,4 +148,26 @@ public class TestInstance extends TestCommon {
 
         assertEquals(2, configurationList.size());
     }
+
+
+    @Test
+    public void testJackPanMethod() throws Exception {
+        registerMBean(new SimpleTestJavaApp(), "org.datadog.jmxfetch.test:foo=Bar,qux=Baz");
+        initApplication("jmx_jackpan_test_example.yaml");
+        run();
+
+        List<Map<String, Object>> metrics = getMetrics();
+        assertEquals(28, metrics.size());
+        for (Map<String, Object> metric : metrics) {
+            String[] tags = (String[]) metric.get("tags");
+            this.assertHostnameTags(Arrays.asList(tags));
+        }
+
+        List<Map<String, Object>> serviceChecks = getServiceChecks();
+        assertEquals(4, serviceChecks.size());
+        for (Map<String, Object> sc : serviceChecks) {
+            String[] tags = (String[]) sc.get("tags");
+            this.assertHostnameTags(Arrays.asList(tags));
+        }
+    }
 }

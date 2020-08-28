@@ -811,7 +811,7 @@ public class TestApp extends TestCommon {
         assertCoverage();
     }
 
-    /** 
+    /**
      * Test JMX Service Discovery.
      * */
     @Test
