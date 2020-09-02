@@ -214,6 +214,30 @@ public class AppConfig {
     @Builder.Default
     private int ipcPort = 0;
 
+    @Parameter(
+        names = {"--redis_ip"},
+        description = "The redis ip",
+        required = false)
+    private String redisIp;
+
+    @Parameter(
+        names = {"--redis_port"},
+        description = "The redis port",
+        required = false)
+    private int redisPort;
+
+    @Parameter(
+        names = {"--virtual_machine_name"},
+        description = "The virtual machine name",
+        required = false)
+    private String virtualMachineName;
+
+    @Parameter(
+        names = {"--soft_type"},
+        description = "The virtual machine name",
+        required = false)
+    private String softType;
+
     /**
      * Boolean setting to determine whether to ignore jvm_direct instances.
      * If set to true, other instances will be ignored.
@@ -413,5 +437,41 @@ public class AppConfig {
 
     public boolean isEmbedded() {
         return embedded;
+    }
+
+    /**
+     * Gets redisIp.
+     *
+     * @return Value of redisIp.
+     */
+    public String getRedisIp() {
+        return this.redisIp;
+    }
+
+    /**
+     * Gets redisPort.
+     *
+     * @return Value of redisPort.
+     */
+    public int getRedisPort() {
+        return this.redisPort;
+    }
+
+    /**
+     * Gets virtualMachineName.
+     *
+     * @return Value of virtualMachineName.
+     */
+    public String getVirtualMachineName() {
+        return this.virtualMachineName;
+    }
+
+    /**
+     * Gets softType.
+     *
+     * @return Value of softType.
+     */
+    public String getSoftType() {
+        return this.softType;
     }
 }

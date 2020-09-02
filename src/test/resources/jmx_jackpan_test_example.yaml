@@ -7,21 +7,13 @@ instances:
         - jmx:fetch
       conf:
         - include:
-            domain: org.datadog.jmxfetch.test
+            domain: org.springframework.boot
+            type: Admin
+            name: SpringApplication
             attribute:
-              ShouldBe100:
+              Ready:
                 metric_type: gauge
-                alias: this.is.100.$foo.$qux
-
-  -   process_name_regex: .*simplevote.*
-      empty_default_hostname: true
-      name: jmx_test_no_hostname
-      tags:
-        - jmx:fetch
-      conf:
-        - include:
-            domain: org.datadog.jmxfetch.test
-            attribute:
-              ShouldBe100:
+                alias: spring.ready
+              EmbeddedWebApplication:
                 metric_type: gauge
-                alias: this.is.100.$foo.$qux
+                alias: spring.embedded

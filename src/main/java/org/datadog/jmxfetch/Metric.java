@@ -1,9 +1,11 @@
 package org.datadog.jmxfetch;
 
+import java.io.Serializable;
+
 /**
  * Metric carrier class.
  */
-public class Metric {
+public class Metric implements Serializable {
     private final String alias;
     private final String metricType;
     private final String[] tags;

@@ -7,6 +7,11 @@ import com.google.common.primitives.Bytes;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
@@ -19,6 +24,7 @@ import org.datadog.jmxfetch.tasks.TaskProcessor;
 import org.datadog.jmxfetch.tasks.TaskStatusHandler;
 import org.datadog.jmxfetch.util.CustomLogger;
 import org.datadog.jmxfetch.util.FileHelper;
+import org.datadog.jmxfetch.util.RedisUtil;
 import org.datadog.jmxfetch.util.ServiceCheckHelper;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -53,6 +59,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.security.auth.login.FailedLoginException;
+import redis.clients.jedis.Jedis;
 
 
 @SuppressWarnings("unchecked")
@@ -69,6 +76,9 @@ public class App {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
     private static final String COLLECTION_POOL_NAME = "jmxfetch-collectionPool";
     private static final String RECOVERY_POOL_NAME = "jmxfetch-recoveryPool";
+    private static final Gson GSON = new Gson();
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy_MM_dd");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     private static int loopCounter;
     private int lastJsonConfigTs;
@@ -134,6 +144,11 @@ public class App {
         if (config.isHelp() || AppConfig.ACTION_HELP.equals(config.getAction())) {
             commander.usage();
             System.exit(0);
+        }
+
+        // Get configuration and init redis client pool.
+        if (config.getRedisIp() != null && config.getRedisPort() > 0) {
+            RedisUtil.init(config.getRedisIp(), config.getRedisPort());
         }
 
         {
@@ -1193,8 +1208,24 @@ public class App {
                 }
 
                 if (numberOfMetrics > 0) {
-                    reporter.sendMetrics(
-                            metrics, instance.getName(), instance.getCanonicalRateConfig());
+//                    reporter.sendMetrics(
+//                            metrics, instance.getName(), instance.getCanonicalRateConfig());
+                    // Insert monitor data to redis.
+                    if (appConfig.getRedisIp() != null && appConfig.getRedisPort() > 0 &&
+                        appConfig.getVirtualMachineName() != null && appConfig.getSoftType() != null) {
+                        LocalDateTime localDateTime = LocalDateTime.now();
+                        try (Jedis jedis = RedisUtil.getJedis()){
+                            Map<String, String> result = new HashMap<>(1);
+                            result.put(TIME_FORMATTER.format(localDateTime), GSON.toJson(metrics));
+                            String uniqueKey = appConfig.getVirtualMachineName() + "_" + appConfig.getSoftType() + "_" + DATE_FORMATTER.format(localDateTime);
+                            jedis.hmset(uniqueKey, result);
+                            jedis.expire(uniqueKey, 86400 * 7);
+                            System.out.println(GSON.toJson(metrics));
+
+                        }
+                    }
+
+
                 }
 
             } catch (TaskProcessException te) {

@@ -21,27 +21,28 @@ public class ConsoleReporter extends Reporter {
     @Override
     protected void sendMetricPoint(
             String metricType, String metricName, double value, String[] tags) {
-        String tagString = "[" + Joiner.on(",").join(tags) + "]";
-        log.info(
-                metricName + tagString + " - " + System.currentTimeMillis() / 1000 + " = " + value);
-
-        Map<String, Object> metric = new HashMap<String, Object>();
-        metric.put("name", metricName);
-        metric.put("value", value);
-        metric.put("tags", tags);
-        metric.put("type", metricType);
-        metrics.add(metric);
+//        String tagString = "[" + Joiner.on(",").join(tags) + "]";
+//        log.info(
+//                metricName + tagString + " - " + System.currentTimeMillis() / 1000 + " = " + value);
+//
+//        Map<String, Object> metric = new HashMap<String, Object>();
+//        metric.put("name", metricName);
+//        metric.put("value", value);
+//        metric.put("tags", tags);
+//        metric.put("type", metricType);
+//        metrics.add(metric);
     }
 
     /** Returns list of metrics to report and clears stored metric map. */
     public List<Map<String, Object>> getMetrics() {
-        List<Map<String, Object>> returnedMetrics =
-                new ArrayList<Map<String, Object>>(metrics.size());
-        for (Map<String, Object> map : metrics) {
-            returnedMetrics.add(new HashMap<String, Object>(map));
-        }
-        metrics.clear();
-        return returnedMetrics;
+//        List<Map<String, Object>> returnedMetrics =
+//                new ArrayList<Map<String, Object>>(metrics.size());
+//        for (Map<String, Object> map : metrics) {
+//            returnedMetrics.add(new HashMap<String, Object>(map));
+//        }
+//        metrics.clear();
+//        return returnedMetrics;
+        return null;
     }
 
     /** Adds service check to report on. */

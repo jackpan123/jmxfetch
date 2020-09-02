@@ -1,7 +1,8 @@
 init_config:
 
 instances:
-  -   process_name_regex: .*surefire.*
+  -   process_name_regex: .*simplevote.*
+      jvm_direct: true
       name: jmx_test_default_hostname
       tags:
         - jmx:fetch
@@ -13,7 +14,7 @@ instances:
                       metric_type: gauge
                       alias: this.is.100.$foo.$qux
 
-  -   process_name_regex: .*surefire.*
+  -   process_name_regex: .*simplevote.*
       empty_default_hostname: true
       name: jmx_test_no_hostname
       tags:
